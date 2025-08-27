@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: ChatApp
+  data:
+    mongodb:
+      database: chat
+      host: localhost
+      port: 27017
+      username: admin
+      password: ${PASSWORD_DB}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  main:
+    allow-bean-definition-overriding: true
