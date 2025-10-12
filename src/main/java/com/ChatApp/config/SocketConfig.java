@@ -1,26 +1,24 @@
 package com.ChatApp.config;
 
-
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.*;
 
 
 @Configuration
-@EnableWebSocket
-public class SocketConfig implements WebSocketConfigurer {
+@EnableWebSocketMessageBroker
+public class SocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
-        webSocketHandlerRegistry.addHandler(myHandler(), "/myhandler");
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/ws");
     }
 
-    @Bean
-    public WebSocketHandler myHandler() {
-        return new MyHandler();
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.setApplicationDestinationPrefixes("/app");
+        config.enableSimpleBroker("/topic");
     }
-
 }
 
 

@@ -9,10 +9,6 @@ import lombok.Setter;
 @Builder
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Response<T> {
-    @Builder.Default
-    private int code=1000;
-    @Builder.Default
-    private String message="Success";
-    private T data;
+public class Response {
+    private String message;
 }

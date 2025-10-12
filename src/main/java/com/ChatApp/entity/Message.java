@@ -15,11 +15,12 @@ public class Message {
     @Id
     private String id;
     private String content;
-    private Long senderId;
-    private Long conversationId;
+    private String senderId;
+    private String conversationId;
     private TypeMessage type;
     private Date sentAt;
-    private Long replyToMessageId;
+    private String replyToMessageId;
+    private boolean isDeleted;
     private Date createdAt;
     private Date updatedAt;
 

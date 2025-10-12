@@ -9,6 +9,7 @@ import java.util.Date;
 @Setter
 public class LastMessage {
     private String content;
-    private Long senderId;
+    private String username;
     private Date sentAt;
+    private String type;
 }
