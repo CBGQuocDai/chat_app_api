@@ -1,6 +1,7 @@
 package com.ChatApp.entity;
 
 import com.ChatApp.enums.TypeMessage;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -11,6 +12,7 @@ import java.util.Date;
 @Document(value = "messages")
 @Getter
 @Setter
+@Builder
 public class Message {
     @Id
     private String id;

@@ -26,7 +26,7 @@ import java.util.List;
 public class SecurityConfig {
     private static final String[] PUBLIC_URLS = {
             "/api/auth/login", "/api/auth/verify-otp", "/api/auth/register"
-            , "/api/avatars/**"};
+            , "/api/avatars/**", "/ws/**"};
     @Bean
     public JwtFilter jwtFilter() {
         return new JwtFilter();

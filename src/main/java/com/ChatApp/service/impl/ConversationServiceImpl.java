@@ -5,6 +5,7 @@ import com.ChatApp.dto.response.ConversationResponse;
 import com.ChatApp.dto.response.MessageResponse;
 import com.ChatApp.dto.response.UserResponse;
 import com.ChatApp.entity.Conversation;
+import com.ChatApp.entity.LastMessage;
 import com.ChatApp.entity.Message;
 import com.ChatApp.entity.User;
 import com.ChatApp.enums.Error;
@@ -15,6 +16,7 @@ import com.ChatApp.repository.ConversationRepository;
 import com.ChatApp.repository.MessageRepository;
 import com.ChatApp.repository.UserRepository;
 import com.ChatApp.service.ConversationService;
+import com.ChatApp.utils.MessageEncrypt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContext;
@@ -34,7 +36,7 @@ public class ConversationServiceImpl implements ConversationService {
     private final UserMapper userMapper;
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
-
+    private final MessageEncrypt messageEncrypt;
     @Override
     public List<ConversationResponse> getConversationList() {
         System.out.println( "getConversationList");
@@ -62,12 +64,13 @@ public class ConversationServiceImpl implements ConversationService {
                     throw new AppException(Error.USER_NOT_EXIST);
                 }
             }
+            LastMessage lastMessage = conversation.getLastMessage();
+            lastMessage.setContent(messageEncrypt.decrypt(lastMessage.getContent()));
             result.add(new ConversationResponse(conversation.getId(),conversation.getName(),
                     conversation.getIsGroup(),conversation.getAvatarGroup(),users,
                     conversation.getLastMessage(),
                     5));
         }
-
         log.info("result: {}", result.size());
         result.sort((c1, c2) -> c2.lastMessage().getSentAt().compareTo(c1.lastMessage().getSentAt()));
         return result;
@@ -163,9 +166,11 @@ public class ConversationServiceImpl implements ConversationService {
                     users.add(userMapper.fromUserToUserResponse(user));
                 }
             }
+            LastMessage lastMessage = conversation.getLastMessage();
+            lastMessage.setContent(messageEncrypt.decrypt(lastMessage.getContent()));
             return new ConversationResponse(conversation.getId()
                     ,conversation.getName(), conversation.getIsGroup(), conversation.getAvatarGroup(), users,
-                    conversation.getLastMessage(), 0);
+                    lastMessage, 0);
         }
         else {
             throw new AppException(Error.SERVER_ERROR);
