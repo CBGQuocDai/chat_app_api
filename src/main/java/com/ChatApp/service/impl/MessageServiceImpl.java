@@ -124,7 +124,12 @@ public class MessageServiceImpl implements MessageService {
             message = messageEncrypt.encrypt("vừa gửi một tệp");
         }
         else {
-            message = messageEncrypt.encrypt("Đã gửi một ảnh");
+            if(req.type()== TypeMessage.IMAGE) {
+                message = messageEncrypt.encrypt("Đã gửi một ảnh");
+            }
+            else {
+                message = messageEncrypt.encrypt("Đã gửi một tin nhắn thoại");
+            }
         }
         lastMessage.setUsername(u.getUsername());
         lastMessage.setType(String.valueOf(req.type()));

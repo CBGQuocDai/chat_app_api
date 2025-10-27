@@ -39,7 +39,7 @@ public class MessageController {
         try {
 //            messagingTemplate.convertAndSend("/user/queue/"+msg.getConversationId()+"/messages",
 //                    objectMapper.writer().writeValueAsString(msg));
-            messagingTemplate.convertAndSend("/user/queue/messages",
+            messagingTemplate.convertAndSend("/queue/"+conversationId,
                     objectMapper.writer().writeValueAsString(msg));
         } catch (Exception e) {
             log.error("Error when sending message: {}", e.getMessage());

@@ -1,6 +1,7 @@
 package com.ChatApp.controller;
 
 
+import com.ChatApp.dto.request.SendFileRequest;
 import com.ChatApp.dto.request.SendMessageRequest;
 import com.ChatApp.dto.response.MessageResponse;
 import com.ChatApp.entity.Message;
@@ -34,28 +35,24 @@ public class ChatController {
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@Payload SendMessageRequest message, Principal principal) throws JsonProcessingException {
         log.info("chat: {}", message);
-        if( message.payload() != null ) {
-            log.info("principal: {}", message.payload().getUrl());
-        }
         ObjectMapper objectMapper = new ObjectMapper();
-        MessageResponse msg = MessageResponse.builder()
+        if(message.type()== TypeMessage.TEXT){
+            MessageResponse msg = MessageResponse.builder()
                 .content(message.content())
                 .sendAt(new Date())
                 .type(message.type())
                 .replyToMessageId(message.replyToMessageId())
                 .conversationId(message.conversationId())
                 .build();
-        if(principal instanceof UsernamePasswordAuthenticationToken) {
-            User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-            msg.setSender(userMapper.fromUserToUserResponse(user));
-            Message newMessage  =  messageService.sendMessage(message, user);
-            msg.setId(newMessage.getId());
-            if (message.type() != TypeMessage.TEXT && message.payload() != null) {
-                fileService.saveFile(message.payload());
+            if(principal instanceof UsernamePasswordAuthenticationToken) {
+                User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+                msg.setSender(userMapper.fromUserToUserResponse(user));
+                Message newMessage  =  messageService.sendMessage(message, user);
+                msg.setId(newMessage.getId());
+                System.out.println(msg);
+                messagingTemplate.convertAndSend("/queue/"+msg.getConversationId(),
+                        objectMapper.writer().writeValueAsString(msg));
             }
-            System.out.println(msg);
-            messagingTemplate.convertAndSend("/user/queue/messages",
-                    objectMapper.writer().writeValueAsString(msg));
         }
     }
 }

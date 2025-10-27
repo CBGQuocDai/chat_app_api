@@ -18,10 +18,8 @@ import java.io.IOException;
 @RestController
 public class AvatarController {
     private final UserServiceImpl userService;
-
     @GetMapping("/{file}")
     public void getAvatar(@PathVariable String file, HttpServletResponse response) throws IOException {
-
         try {
             S3ObjectInputStream in = userService.getAvatar(file);
             response.setContentType("image/png");

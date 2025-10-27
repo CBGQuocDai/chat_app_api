@@ -19,12 +19,19 @@ public class SocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.setApplicationDestinationPrefixes("/app");
-        config.enableSimpleBroker("/user/queue/messages");
+        config.enableSimpleBroker("/queue");
     }
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(jwtInterceptor);
     }
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+         registration.setSendBufferSizeLimit(5*1024*1024) // Tăng buffer gửi lên 5MB
+                .setSendTimeLimit(20*1000)      // Thời gian chờ gửi (ms)
+                .setMessageSizeLimit(5*1024*1024); // Kích thước tối đa của một tin nhắn (byte)
+    }
+
 }
 
 
